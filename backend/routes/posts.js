@@ -23,8 +23,13 @@ router.get('/', authorize, (request, response) => {
 });
 
 router.post('/', authorize,  (request, response) => {
-
     // Endpoint to create a new post
+    post = request.body
+    post['userId'] = request.currentUser.id
+
+    PostModel.create(request.body, (callback) => {
+        response.status(201).json(post)
+    });
 
 });
 

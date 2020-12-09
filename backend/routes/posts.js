@@ -27,7 +27,7 @@ router.post('/', authorize,  (request, response) => {
     post = request.body
     post['userId'] = request.currentUser.id
 
-    PostModel.create(request.body, (callback) => {
+    PostModel.create(post, (callback) => {
         response.status(201).json(post)
     });
 

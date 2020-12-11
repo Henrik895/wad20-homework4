@@ -11,7 +11,7 @@
                 <button type="button">Search</button>
             </div>
             <div class="avatar-container">
-                <img class="avatar" :src="user.avatar" @click="toggleDropDown">
+                <img class="avatar" :src="user | profileAvatar" @click="toggleDropDown">
                 <div class="drop-down-container" v-show="dropdownVisible">
                     <span id="user-name">{{user | profileName}}</span>
                     <span id="user-email">{{user.email}}</span>
@@ -64,12 +64,21 @@
             },
             logout: function () {
                 this.$store.dispatch('SET_USER', null);
+                // Remove the access token.
+                localStorage.removeItem("accessToken");
                 this.$router.push({name: 'login'});
             }
         },
         filters: {
             profileName: function (profile) {
                 return profile.firstname + ' ' + profile.lastname;
+            },
+            profileAvatar: function (user) {
+                if (user.avatar) {
+                    return user.avatar;
+                } else {
+                    return "https://i.imgur.com/joDMEGk.png";
+                }
             }
         }
     }

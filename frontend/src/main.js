@@ -14,6 +14,8 @@ Vue.use(Vuex);
 
 axios.defaults.baseURL = 'http://localhost:3000/';
 axios.defaults.headers.common['Authorization'] = 'Bearer ';
+// Configuration parameter for using persisted sessions (aka user stays logged in after refreshing or accidentally closing the tab).
+const persistedSessions = true;
 
 const store = new Vuex.Store({
     state: {
@@ -31,6 +33,13 @@ const store = new Vuex.Store({
             if (user) {
                 localStorage.setItem('accessToken', user.accessToken);
             }
+
+            axios
+                .defaults
+                .headers
+                .common['Authorization'] = 'Bearer ' + localStorage.getItem('accessToken');
+        },
+        SET_TOKEN: () => {
 
             axios
                 .defaults
@@ -71,17 +80,55 @@ const routes = [
 const router = new VueRouter({routes});
 
 router.beforeEach((to, from, next) => {
+    // Check if we need authentication for this view.
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (!store.getters.user || !localStorage.getItem('accessToken')) {
-            next({name: 'login'});
-            return;
+        // If we don't use persisted user sessions and either a token or user is missing, send the user to login.
+        if (!persistedSessions) {
+            if (!store.getters.user || !localStorage.getItem('accessToken')) {
+                next({name: 'login'});
+                return;
+            }
+        } else {
+            // Otherwise
+            // If we don't have an access token, we can't be logged in. Send the user to login.
+            if (!localStorage.getItem('accessToken')) {
+                next({name: 'login'});
+                return;
+            } else if (!store.getters.user) {
+                // If we have the access token, but user object is not saved (for example we've just refreshed the page),
+                // we can reauthenticate ourselves (if the token is still valid).
+                // Set the token to the store from localStorage.
+                store.dispatch("SET_TOKEN");
+                // Try to authorize the user.
+                axios.get('users/authorize')
+                    .then((response) => {
+                        // In case of success, set the user and proceed to next page.
+                        store.dispatch('SET_USER', response.data);
+                        next(to);
+                    })
+                    .catch(() => {
+                        // In case of error, our access token is invalid, so we delete it and send the user to login.
+                        localStorage.removeItem("accessToken");
+                        next({name: 'login'});
+                    })
+                return;
+            }
         }
     }
+    // If next component doesn't need auth, we'll just proceed.
     next();
 });
 
 
 Vue.config.productionTip = false;
+
+Vue.filter('profileAvatar', function (avatar) {
+    if (avatar) {
+        return avatar;
+    } else {
+        return "https://i.imgur.com/joDMEGk.png";
+    }
+})
 
 new Vue({
     router,

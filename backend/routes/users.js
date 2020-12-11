@@ -3,6 +3,7 @@ const router = express.Router();
 const authorize = require('../middlewares/authorize');
 const UserModel = require('../models/UserModel');
 const FollowModel = require('../models/FollowModel');
+const jwt = require("../library/jwt");
 
 // Public endpoints
 router.post('/', (request, response) => {
@@ -79,15 +80,42 @@ router.post('/login', (request, response) => {
             return;
         }
 
+        let accessToken = jwt.createAccessToken({
+            id: user.id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+        });
+
         response.json({
             id: user.id,
             firstname: user.firstname,
             lastname: user.lastname,
             email: user.email,
             avatar: user.avatar,
-            accessToken: null // THis is the place where you should pass generated access token
+            accessToken: accessToken,
         })
     });
+});
+
+// Route to authorize a user who is already logged in and has a still valid authorization token.
+router.get('/authorize', authorize, (request, response) => {
+
+    let currentUser = request.currentUser;
+
+    // Refresh the access token.
+    let newAccessToken = jwt.createAccessToken(currentUser);
+
+    if (currentUser && newAccessToken) {
+        response.json({
+            id: currentUser.id,
+            firstname: currentUser.firstname,
+            lastname: currentUser.lastname,
+            email: currentUser.email,
+            avatar: currentUser.avatar,
+            accessToken: newAccessToken,
+        })
+    }
 });
 
 // Protected endpoints

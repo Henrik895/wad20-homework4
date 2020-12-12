@@ -122,14 +122,6 @@ router.beforeEach((to, from, next) => {
 
 Vue.config.productionTip = false;
 
-Vue.filter('profileAvatar', function (avatar) {
-    if (avatar) {
-        return avatar;
-    } else {
-        return "https://i.imgur.com/joDMEGk.png";
-    }
-})
-
 new Vue({
     router,
     store,

@@ -11,7 +11,7 @@
                 <button type="button">Search</button>
             </div>
             <div class="avatar-container">
-                <img class="avatar" :src="user | profileAvatar" @click="toggleDropDown">
+                <img class="avatar" :src="user.avatar" @click="toggleDropDown">
                 <div class="drop-down-container" v-show="dropdownVisible">
                     <span id="user-name">{{user | profileName}}</span>
                     <span id="user-email">{{user.email}}</span>

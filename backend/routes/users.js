@@ -46,7 +46,7 @@ router.post('/', (request, response) => {
         password: request.body.password,
         firstname: request.body.firstname,
         lastname: request.body.lastname,
-        avatar: request.body.avatar
+        avatar: request.body.avatar !== null ? request.body.avatar : "https://i.imgur.com/joDMEGk.png" // If profile picture doesn't exist, give it a default one. Should be a static file at one point.
     };
 
     UserModel.create(params, () => {

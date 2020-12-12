@@ -3,7 +3,7 @@
         <Header/>
         <section class="main-container">
             <div class="profile" v-for="profile in profiles" :key="profile.id">
-                <img :src="profile.avatar | profileAvatar" :alt="profile | profileName">
+                <img :src="profile.avatar" :alt="profile | profileName">
                 <h2>{{profile | profileName}}</h2>
                 <FollowButton :profile="profile"/>
             </div>

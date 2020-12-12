@@ -86,7 +86,7 @@ const testData = [
             lastname: "Stallman",
             avatar: 'avatar.url'
         }
-    }
+    },
 ];
 
 //Mock axios.get method that our Component calls in mounted event
@@ -103,4 +103,45 @@ describe('Posts', () => {
     it('1 == 1', function () {
         expect(true).toBe(true)
     });
+
+    it("renders 3 posts", function () {
+        let posts = wrapper.findAll( ".post");
+        expect(posts.length).toBe(3);
+    });
+
+    it("should include 'img' tag when rendering post with media type 'image'", function () {
+        let firstPost = wrapper.findAll(".post").at(0);
+        expect(firstPost.get(".post-image").get("img").exists()).toBe(true);
+    });
+
+    it("should include 'video' tag when rendering post with media type 'video'", function () {
+        let thirdPost = wrapper.findAll(".post").at(2);
+        expect(thirdPost.get(".post-image").get("video").exists()).toBe(true);
+    });
+
+    it("should not 'img' and 'video' tags when rendering post with media type null", function () {
+        let secondPost = wrapper.findAll(".post").at(1);
+        expect(secondPost.find(".post-image").exists()).toBe(false);
+    });
+
+    it("should display post creation time in correct format", function() {
+        let firstPostCreationTime = wrapper.findAll(".post").at(0)
+            .find(".post-author")
+            .findAll("small").at(1).text();
+        expect(firstPostCreationTime).toBe("Saturday, December 5, 2020 1:53 PM");
+    });
+
+    it("should display the correct number of likes", function () {
+        let thirdPostLikesAmount = wrapper.findAll(".post").at(2)
+            .find(".post-actions")
+            .find(".like-button").text();
+        expect(thirdPostLikesAmount).toBe("+ 3");
+    });
+
+    it("should have class 'liked' on liked posts", function () {
+        let secondPostLikeButton = wrapper.findAll(".post").at(1)
+            .find(".post-actions")
+            .find(".like-button");
+        expect(secondPostLikeButton.find(".liked").exists()).toBe(true);
+    })
 });

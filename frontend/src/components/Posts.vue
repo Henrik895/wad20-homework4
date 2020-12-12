@@ -10,7 +10,7 @@
             <div class="post" v-for="post in posts" :key="post.id">
                 <span class="post-author">
                     <span class="post-author-info">
-                        <img :src="post.author.avatar | profileAvatar" :alt="post.author | profileName"/>
+                        <img :src="post.author.avatar" :alt="post.author | profileName"/>
                         <small>{{post.author | profileName}}</small>
                     </span>
                     <small>{{post.createTime | formatDate}}</small>

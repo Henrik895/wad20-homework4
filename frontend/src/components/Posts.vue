@@ -68,7 +68,7 @@
         },
         filters: {
             formatDate: function (value) {
-                return moment(value).format('LLLL');
+                return moment(value).add(2, 'hours').format('LLLL');
             },
             profileName: function (profile) {
                 return profile.firstname + ' ' + profile.lastname;

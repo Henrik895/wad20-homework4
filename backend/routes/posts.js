@@ -26,7 +26,7 @@ router.post('/', authorize,  (request, response) => {
     // Endpoint to create a new post
     post = request.body
     post['userId'] = request.currentUser.id
-
+    
     PostModel.create(post, (callback) => {
         response.status(201).json(post)
     });

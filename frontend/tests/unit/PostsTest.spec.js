@@ -128,7 +128,7 @@ describe('Posts', () => {
         let firstPostCreationTime = wrapper.findAll(".post").at(0)
             .find(".post-author")
             .findAll("small").at(1).text();
-        expect(firstPostCreationTime).toBe("Saturday, December 5, 2020 1:53 PM");
+        expect(firstPostCreationTime).toBe("Saturday, December 5, 2020 3:53 PM");
     });
 
     it("should display the correct number of likes", function () {
